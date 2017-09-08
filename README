@@ -19,6 +19,12 @@ This toolbox is tested for TPC-H tools v2.17.2 and MariaDB 10.2.8, the latest
 version as of this writing.
 
 
+Author
+======
+
+SeongJae Park <sj38.park@gmail.com>
+
+
 References
 ==========
 
