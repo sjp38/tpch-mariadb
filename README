@@ -19,6 +19,75 @@ This toolbox is tested for TPC-H tools v2.17.2 and MariaDB 10.2.8, the latest
 version as of this writing.
 
 
+Quick Start
+===========
+
+This section describes simple steps for TPC-H test setup and execution.  Every
+example assumes that your current working directory is this repository.
+
+
+Get TPC-H kit
+-------------
+
+```
+$ unzip xxx.zip
+$ mv xxx/ tpch-kit/
+```
+
+
+Modify TPC-H kit Code
+---------------------
+
+```
+$ ./modify_src.sh
+```
+
+
+Build TPC-H Kit
+---------------
+
+```
+$ ./build.sh
+```
+
+
+Generate Data
+-------------
+
+```
+$ ./dbgen.sh
+```
+
+
+Execute Load Test
+-----------------
+
+Before next command, you should start mysqld daemon.  Next command assumes that
+your mysqld has user `root` without password.  In other words, it should be
+able to use `$ mysql -u root` to connect to MariaDB prompt.
+```
+$ ./loadtest.sh
+```
+
+
+Execute Power Test
+------------------
+
+```
+$ ./mkqueries.sh
+$ ./powertest.sh
+```
+
+
+Execute Query 2 Only
+--------------------
+
+```
+$ ./mkqueries.sh
+$ ./runquery.sh 2
+```
+
+
 Author
 ======
 
