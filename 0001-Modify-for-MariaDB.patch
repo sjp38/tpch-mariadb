@@ -1,0 +1,676 @@
+From 41b858d0e03d7010e885611f90893d8bf0541d65 Mon Sep 17 00:00:00 2001
+From: SeongJae Park <sj38.park@gmail.com>
+Date: Fri, 8 Sep 2017 23:31:32 +0900
+Subject: [PATCH] Modify for MariaDB
+
+Signed-off-by: SeongJae Park <sj38.park@gmail.com>
+---
+ dbgen/dss.ddl        |   9 +++
+ dbgen/dss.ri         | 107 ++++++++++++++++------------
+ dbgen/makefile       | 198 +++++++++++++++++++++++++++++++++++++++++++++++++++
+ dbgen/queries/1.sql  |   3 +-
+ dbgen/queries/10.sql |   2 +-
+ dbgen/queries/11.sql |   1 -
+ dbgen/queries/12.sql |   1 -
+ dbgen/queries/13.sql |   5 +-
+ dbgen/queries/14.sql |   1 -
+ dbgen/queries/15.sql |   1 -
+ dbgen/queries/16.sql |   1 -
+ dbgen/queries/17.sql |   1 -
+ dbgen/queries/18.sql |   2 +-
+ dbgen/queries/19.sql |   1 -
+ dbgen/queries/2.sql  |   2 +-
+ dbgen/queries/20.sql |   1 -
+ dbgen/queries/21.sql |   2 +-
+ dbgen/queries/22.sql |   1 -
+ dbgen/queries/3.sql  |   2 +-
+ dbgen/queries/4.sql  |   1 -
+ dbgen/queries/5.sql  |   1 -
+ dbgen/queries/6.sql  |   1 -
+ dbgen/queries/7.sql  |   1 -
+ dbgen/queries/8.sql  |   1 -
+ dbgen/queries/9.sql  |   1 -
+ dbgen/tpcd.h         |   8 +--
+ 26 files changed, 279 insertions(+), 76 deletions(-)
+ create mode 100644 dbgen/makefile
+
+diff --git a/dbgen/dss.ddl b/dbgen/dss.ddl
+index 89efe56..4d3f7eb 100644
+--- a/dbgen/dss.ddl
++++ b/dbgen/dss.ddl
+@@ -68,3 +68,12 @@ CREATE TABLE LINEITEM ( L_ORDERKEY    INTEGER NOT NULL,
+                              L_SHIPMODE     CHAR(10) NOT NULL,
+                              L_COMMENT      VARCHAR(44) NOT NULL);
+ 
++
++RENAME TABLE CUSTOMER TO customer;
++RENAME TABLE NATION TO nation;
++RENAME TABLE ORDERS TO orders;
++RENAME TABLE PART TO part;
++RENAME TABLE PARTSUPP TO partsupp;
++RENAME TABLE REGION TO region;
++RENAME TABLE SUPPLIER TO supplier;
++RENAME TABLE LINEITEM TO lineitem;
+diff --git a/dbgen/dss.ri b/dbgen/dss.ri
+index fb4c002..e969579 100644
+--- a/dbgen/dss.ri
++++ b/dbgen/dss.ri
+@@ -1,100 +1,113 @@
+ -- Sccsid:     @(#)dss.ri	2.1.8.1
+ -- TPCD Benchmark Version 8.0
+ 
+-CONNECT TO TPCD;
+-
+---ALTER TABLE TPCD.REGION DROP PRIMARY KEY;
+---ALTER TABLE TPCD.NATION DROP PRIMARY KEY;
+---ALTER TABLE TPCD.PART DROP PRIMARY KEY;
+---ALTER TABLE TPCD.SUPPLIER DROP PRIMARY KEY;
+---ALTER TABLE TPCD.PARTSUPP DROP PRIMARY KEY;
+---ALTER TABLE TPCD.ORDERS DROP PRIMARY KEY;
+---ALTER TABLE TPCD.LINEITEM DROP PRIMARY KEY;
+---ALTER TABLE TPCD.CUSTOMER DROP PRIMARY KEY;
++RENAME TABLE customer TO CUSTOMER;
++RENAME TABLE nation TO NATION;
++RENAME TABLE orders TO ORDERS;
++RENAME TABLE part TO PART;
++RENAME TABLE partsupp TO PARTSUPP;
++RENAME TABLE region TO REGION;
++RENAME TABLE supplier TO SUPPLIER;
++RENAME TABLE lineitem TO LINEITEM;
++
++--ALTER TABLE REGION DROP PRIMARY KEY;
++--ALTER TABLE NATION DROP PRIMARY KEY;
++--ALTER TABLE PART DROP PRIMARY KEY;
++--ALTER TABLE SUPPLIER DROP PRIMARY KEY;
++--ALTER TABLE PARTSUPP DROP PRIMARY KEY;
++--ALTER TABLE ORDERS DROP PRIMARY KEY;
++--ALTER TABLE LINEITEM DROP PRIMARY KEY;
++--ALTER TABLE CUSTOMER DROP PRIMARY KEY;
+ 
+ 
+ -- For table REGION
+-ALTER TABLE TPCD.REGION
++ALTER TABLE REGION
+ ADD PRIMARY KEY (R_REGIONKEY);
+ 
+ -- For table NATION
+-ALTER TABLE TPCD.NATION
++ALTER TABLE NATION
+ ADD PRIMARY KEY (N_NATIONKEY);
+ 
+-ALTER TABLE TPCD.NATION
+-ADD FOREIGN KEY NATION_FK1 (N_REGIONKEY) references TPCD.REGION;
++ALTER TABLE NATION
++ADD FOREIGN KEY NATION_FK1 (N_REGIONKEY) references REGION(R_REGIONKEY);
++
+ 
+-COMMIT WORK;
+ 
+ -- For table PART
+-ALTER TABLE TPCD.PART
++ALTER TABLE PART
+ ADD PRIMARY KEY (P_PARTKEY);
+ 
+-COMMIT WORK;
++
+ 
+ -- For table SUPPLIER
+-ALTER TABLE TPCD.SUPPLIER
++ALTER TABLE SUPPLIER
+ ADD PRIMARY KEY (S_SUPPKEY);
+ 
+-ALTER TABLE TPCD.SUPPLIER
+-ADD FOREIGN KEY SUPPLIER_FK1 (S_NATIONKEY) references TPCD.NATION;
++ALTER TABLE SUPPLIER
++ADD FOREIGN KEY SUPPLIER_FK1 (S_NATIONKEY) references NATION(N_NATIONKEY);
++
+ 
+-COMMIT WORK;
+ 
+ -- For table PARTSUPP
+-ALTER TABLE TPCD.PARTSUPP
++ALTER TABLE PARTSUPP
+ ADD PRIMARY KEY (PS_PARTKEY,PS_SUPPKEY);
+ 
+-COMMIT WORK;
++
+ 
+ -- For table CUSTOMER
+-ALTER TABLE TPCD.CUSTOMER
++ALTER TABLE CUSTOMER
+ ADD PRIMARY KEY (C_CUSTKEY);
+ 
+-ALTER TABLE TPCD.CUSTOMER
+-ADD FOREIGN KEY CUSTOMER_FK1 (C_NATIONKEY) references TPCD.NATION;
++ALTER TABLE CUSTOMER
++ADD FOREIGN KEY CUSTOMER_FK1 (C_NATIONKEY) references NATION(N_NATIONKEY);
++
+ 
+-COMMIT WORK;
+ 
+ -- For table LINEITEM
+-ALTER TABLE TPCD.LINEITEM
++ALTER TABLE LINEITEM
+ ADD PRIMARY KEY (L_ORDERKEY,L_LINENUMBER);
+ 
+-COMMIT WORK;
++
+ 
+ -- For table ORDERS
+-ALTER TABLE TPCD.ORDERS
++ALTER TABLE ORDERS
+ ADD PRIMARY KEY (O_ORDERKEY);
+ 
+-COMMIT WORK;
++
+ 
+ -- For table PARTSUPP
+-ALTER TABLE TPCD.PARTSUPP
+-ADD FOREIGN KEY PARTSUPP_FK1 (PS_SUPPKEY) references TPCD.SUPPLIER;
++ALTER TABLE PARTSUPP
++ADD FOREIGN KEY PARTSUPP_FK1 (PS_SUPPKEY) references SUPPLIER(S_SUPPKEY);
++
++
+ 
+-COMMIT WORK;
++ALTER TABLE PARTSUPP
++ADD FOREIGN KEY PARTSUPP_FK2 (PS_PARTKEY) references PART(P_PARTKEY);
+ 
+-ALTER TABLE TPCD.PARTSUPP
+-ADD FOREIGN KEY PARTSUPP_FK2 (PS_PARTKEY) references TPCD.PART;
+ 
+-COMMIT WORK;
+ 
+ -- For table ORDERS
+-ALTER TABLE TPCD.ORDERS
+-ADD FOREIGN KEY ORDERS_FK1 (O_CUSTKEY) references TPCD.CUSTOMER;
++ALTER TABLE ORDERS
++ADD FOREIGN KEY ORDERS_FK1 (O_CUSTKEY) references CUSTOMER(C_CUSTKEY);
++
+ 
+-COMMIT WORK;
+ 
+ -- For table LINEITEM
+-ALTER TABLE TPCD.LINEITEM
+-ADD FOREIGN KEY LINEITEM_FK1 (L_ORDERKEY)  references TPCD.ORDERS;
++ALTER TABLE LINEITEM
++ADD FOREIGN KEY LINEITEM_FK1 (L_ORDERKEY)  references ORDERS(O_ORDERKEY);
+ 
+-COMMIT WORK;
+ 
+-ALTER TABLE TPCD.LINEITEM
+-ADD FOREIGN KEY LINEITEM_FK2 (L_PARTKEY,L_SUPPKEY) references 
+-        TPCD.PARTSUPP;
+ 
+-COMMIT WORK;
++ALTER TABLE LINEITEM
++ADD FOREIGN KEY LINEITEM_FK2 (L_PARTKEY,L_SUPPKEY) references 
++        PARTSUPP(PS_PARTKEY,PS_SUPPKEY);
+ 
+ 
++RENAME TABLE CUSTOMER TO customer;
++RENAME TABLE NATION TO nation;
++RENAME TABLE ORDERS TO orders;
++RENAME TABLE PART TO part;
++RENAME TABLE PARTSUPP TO partsupp;
++RENAME TABLE REGION TO region;
++RENAME TABLE SUPPLIER TO supplier;
++RENAME TABLE LINEITEM TO lineitem;
+diff --git a/dbgen/makefile b/dbgen/makefile
+new file mode 100644
+index 0000000..6014505
+--- /dev/null
++++ b/dbgen/makefile
+@@ -0,0 +1,198 @@
++#
++# $Id: makefile.suite,v 1.25 2009/10/22 19:10:21 jms Exp $
++#
++# Revision History
++# ===================
++# $Log: makefile.suite,v $
++# Revision 1.25  2009/10/22 19:10:21  jms
++# update revision to 2.9.0, disable bug55 fix
++#
++# Revision 1.24  2009/10/22 19:06:10  jms
++# update revision to 2.9.0, disable bug55 fix
++#
++# Revision 1.23  2009/06/28 14:01:08  jms
++# bug fix for DOP
++#
++# Revision 1.22  2008/09/15 16:37:46  jms
++# release 2.8.0 makefile.suite
++#
++# Revision 1.21  2008/03/21 18:26:54  jms
++# recursive zip for reference data, chmod for update_release
++#
++# Revision 1.20  2008/03/21 17:38:39  jms
++# changes for 2.6.3
++#
++# Revision 1.19  2007/03/08 20:36:03  jms
++# update release number to 2.6.1
++#
++# Revision 1.18  2007/02/06 18:15:56  jms
++# remove update release from general target
++#
++# Revision 1.17  2007/01/25 19:35:50  jms
++# add sln file used by VS2005
++#
++# Revision 1.16  2007/01/05 20:05:41  jms
++# update release number
++#
++# Revision 1.15  2006/09/07 17:25:57  jms
++# correct dss.ddl
++#
++# Revision 1.14  2006/08/01 17:21:22  jms
++# fix bad merge
++#
++# Revision 1.13  2006/08/01 16:55:44  jms
++# move to 2.4.1
++#
++# Revision 1.12  2006/06/29 20:46:17  jms
++# 2.4.0 changes from Meikel
++#
++# Revision 1.10  2006/05/25 22:30:44  jms
++# qgen porting for 32b/64b
++#
++# Revision 1.9  2006/04/26 23:17:09  jms
++# checking release.h prior to release build
++#
++# Revision 1.8  2006/04/26 23:03:00  jms
++# release 2.3.4-1
++#
++# Revision 1.7  2006/04/12 18:13:58  jms
++# release 2.3.3
++#
++# Revision 1.6  2006/03/09 18:59:19  jms
++# move to version 2.3.2
++#
++# Revision 1.5  2006/01/28 23:54:32  jms
++# add reference data to release
++#
++# Revision 1.4  2005/10/28 03:00:32  jms
++# fix release target
++#
++# Revision 1.3  2005/10/28 02:54:14  jms
++# increment build count with each release creation
++#
++# Revision 1.2  2005/01/03 20:08:58  jms
++# change line terminations
++#
++# Revision 1.1.1.1  2004/11/24 23:31:47  jms
++# re-establish external server
++#
++# Revision 1.5  2004/03/26 20:39:23  jms
++# add tpch tag to release files
++#
++# Revision 1.4  2004/03/16 14:45:57  jms
++# correct release target in makefile
++#
++# Revision 1.3  2004/03/02 20:49:01  jms
++# simplify distributions, add Windows IDE files
++# releases should use make release from now on
++#
++# Revision 1.2  2004/02/18 14:05:53  jms
++# porting changes for LINUX and 64 bit RNG
++#
++# Revision 1.1.1.1  2003/04/03 18:54:21  jms
++# recreation after CVS crash
++#
++# Revision 1.1.1.1  2003/04/03 18:54:21  jms
++# initial checkin
++#
++#
++#
++################
++## CHANGE NAME OF ANSI COMPILER HERE
++################
++CC      = gcc
++# Current values for DATABASE are: INFORMIX, DB2, TDAT (Teradata)
++#                                  SQLSERVER, SYBASE, ORACLE, VECTORWISE
++# Current values for MACHINE are:  ATT, DOS, HP, IBM, ICL, MVS, 
++#                                  SGI, SUN, U2200, VMS, LINUX, WIN32 
++# Current values for WORKLOAD are:  TPCH
++DATABASE= SQLSERVER
++MACHINE = LINUX
++WORKLOAD = TPCH
++#
++CFLAGS	= -g -DDBNAME=\"dss\" -D$(MACHINE) -D$(DATABASE) -D$(WORKLOAD) -DRNG_TEST -D_FILE_OFFSET_BITS=64 
++LDFLAGS = -O
++# The OBJ,EXE and LIB macros will need to be changed for compilation under
++#  Windows NT
++OBJ     = .o
++EXE     =
++LIBS    = -lm
++#
++# NO CHANGES SHOULD BE NECESSARY BELOW THIS LINE
++###############
++VERSION=2
++RELEASE=13
++PATCH=0
++BUILD=`grep BUILD release.h | cut -f3 -d' '`
++NEW_BUILD=`expr ${BUILD} + 1`
++TREE_ROOT=/tmp/tree
++#
++PROG1 = dbgen$(EXE)
++PROG2 = qgen$(EXE)
++PROGS = $(PROG1) $(PROG2)
++#
++HDR1 = dss.h rnd.h config.h dsstypes.h shared.h bcd2.h rng64.h release.h
++HDR2 = tpcd.h permute.h
++HDR  = $(HDR1) $(HDR2)
++#
++SRC1 = build.c driver.c bm_utils.c rnd.c print.c load_stub.c bcd2.c \
++	speed_seed.c text.c permute.c rng64.c
++SRC2 = qgen.c varsub.c 
++SRC  = $(SRC1) $(SRC2)
++#
++OBJ1 = build$(OBJ) driver$(OBJ) bm_utils$(OBJ) rnd$(OBJ) print$(OBJ) \
++	load_stub$(OBJ) bcd2$(OBJ) speed_seed$(OBJ) text$(OBJ) permute$(OBJ) \
++	rng64$(OBJ)
++OBJ2 = build$(OBJ) bm_utils$(OBJ) qgen$(OBJ) rnd$(OBJ) varsub$(OBJ) \
++	text$(OBJ) bcd2$(OBJ) permute$(OBJ) speed_seed$(OBJ) rng64$(OBJ)
++OBJS = $(OBJ1) $(OBJ2)
++#
++SETS = dists.dss 
++DOC=README HISTORY PORTING.NOTES BUGS
++DDL  = dss.ddl dss.ri
++WINDOWS_IDE = tpch.dsw dbgen.dsp tpch.sln tpch.vcproj qgen.vcproj
++OTHER=makefile.suite $(SETS) $(DDL) $(WINDOWS_IDE)
++# case is *important* in TEST_RES
++TEST_RES = O.res L.res c.res s.res P.res S.res n.res r.res
++#
++DBGENSRC=$(SRC1) $(HDR1) $(OTHER) $(DOC) $(SRC2) $(HDR2) $(SRC3)
++FQD=queries/1.sql queries/2.sql queries/3.sql queries/4.sql queries/5.sql queries/6.sql queries/7.sql \
++	queries/8.sql queries/9.sql queries/10.sql queries/11.sql queries/12.sql queries/13.sql \
++	queries/14.sql queries/15.sql queries/16.sql queries/17.sql queries/18.sql queries/19.sql queries/20.sql \
++	queries/21.sql queries/22.sql
++VARIANTS= variants/8a.sql variants/12a.sql variants/13a.sql variants/14a.sql variants/15a.sql 
++ANS   = answers/q1.out answers/q2.out answers/q3.out answers/q4.out answers/q5.out answers/q6.out answers/q7.out answers/q8.out \
++	answers/q9.out answers/q10.out answers/q11.out answers/q12.out answers/q13.out answers/q14.out answers/q15.out \
++	answers/q16.out answers/q17.out answers/q18.out answers/q19.out answers/q20.out answers/q21.out answers/q22.out
++QSRC  = $(FQD) $(VARIANTS) $(ANS)
++TREE_DOC=tree.readme tree.changes appendix.readme appendix.version answers.readme queries.readme variants.readme
++REFERENCE=reference/[tcR]*
++REFERENCE_DATA=referenceData/[13]*
++SCRIPTS= check55.sh column_split.sh dop.sh gen_tasks.sh last_row.sh load_balance.sh new55.sh check_dirs.sh
++ALLSRC=$(DBGENSRC) $(REFERENCE) $(QSRC) $(SCRIPTS)
++JUNK  = 
++#
++all: $(PROGS)
++$(PROG1): $(OBJ1) $(SETS) 
++	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(OBJ1) $(LIBS)
++$(PROG2): permute.h $(OBJ2) 
++	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(OBJ2) $(LIBS)
++clean:
++	rm -f $(PROGS) $(OBJS) $(JUNK)
++lint:
++	lint $(CFLAGS) -u -x -wO -Ma -p $(SRC1)
++	lint $(CFLAGS) -u -x -wO -Ma -p $(SRC2)
++
++tar: $(ALLSRC) 
++	tar cvhf - $(ALLSRC) --exclude .svn\*/\* |gzip - > tpch_${VERSION}_${RELEASE}_${PATCH}.tar.gz
++	tar cvhf - $(REFERENCE_DATA) --exclude .svn\*/\* |gzip - > reference_${VERSION}_${RELEASE}_${PATCH}.tar.gz
++zip: $(ALLSRC)
++	zip -r tpch_${VERSION}_${RELEASE}_${PATCH}.zip $(ALLSRC) -x *.svn*
++	zip -r reference_${VERSION}_${RELEASE}_${PATCH}.zip $(REFERENCE_DATA) -x *.svn*
++release: 
++	make -f makefile.suite tar
++	make -f makefile.suite zip
++	( cd tests; sh test_list.sh `date '+%Y%m%d'` )
++rnd$(OBJ): rnd.h
++$(OBJ1): $(HDR1)
++$(OBJ2): dss.h tpcd.h config.h rng64.h release.h
+diff --git a/dbgen/queries/1.sql b/dbgen/queries/1.sql
+index 407417e..a44af27 100644
+--- a/dbgen/queries/1.sql
++++ b/dbgen/queries/1.sql
+@@ -18,11 +18,10 @@ select
+ from
+ 	lineitem
+ where
+-	l_shipdate <= date '1998-12-01' - interval ':1' day (3)
++	l_shipdate <= date '1998-12-01' - interval ':1' day
+ group by
+ 	l_returnflag,
+ 	l_linestatus
+ order by
+ 	l_returnflag,
+ 	l_linestatus;
+-:n -1
+diff --git a/dbgen/queries/10.sql b/dbgen/queries/10.sql
+index 2c8810c..aee6092 100644
+--- a/dbgen/queries/10.sql
++++ b/dbgen/queries/10.sql
+@@ -34,5 +34,5 @@ group by
+ 	c_address,
+ 	c_comment
+ order by
+-	revenue desc;
++	revenue desc
+ :n 20
+diff --git a/dbgen/queries/11.sql b/dbgen/queries/11.sql
+index 885185c..e2819fe 100644
+--- a/dbgen/queries/11.sql
++++ b/dbgen/queries/11.sql
+@@ -31,4 +31,3 @@ group by
+ 		)
+ order by
+ 	value desc;
+-:n -1
+diff --git a/dbgen/queries/12.sql b/dbgen/queries/12.sql
+index 0eb4aec..2969b13 100644
+--- a/dbgen/queries/12.sql
++++ b/dbgen/queries/12.sql
+@@ -32,4 +32,3 @@ group by
+ 	l_shipmode
+ order by
+ 	l_shipmode;
+-:n -1
+diff --git a/dbgen/queries/13.sql b/dbgen/queries/13.sql
+index 90d0750..3fbb9c5 100644
+--- a/dbgen/queries/13.sql
++++ b/dbgen/queries/13.sql
+@@ -11,17 +11,16 @@ from
+ 	(
+ 		select
+ 			c_custkey,
+-			count(o_orderkey)
++			count(o_orderkey) as c_count
+ 		from
+ 			customer left outer join orders on
+ 				c_custkey = o_custkey
+ 				and o_comment not like '%:1%:2%'
+ 		group by
+ 			c_custkey
+-	) as c_orders (c_custkey, c_count)
++	) c_orders
+ group by
+ 	c_count
+ order by
+ 	custdist desc,
+ 	c_count desc;
+-:n -1
+diff --git a/dbgen/queries/14.sql b/dbgen/queries/14.sql
+index b5e45e3..a65007f 100644
+--- a/dbgen/queries/14.sql
++++ b/dbgen/queries/14.sql
+@@ -17,4 +17,3 @@ where
+ 	l_partkey = p_partkey
+ 	and l_shipdate >= date ':1'
+ 	and l_shipdate < date ':1' + interval '1' month;
+-:n -1
+diff --git a/dbgen/queries/15.sql b/dbgen/queries/15.sql
+index 8e7e974..56f5dac 100644
+--- a/dbgen/queries/15.sql
++++ b/dbgen/queries/15.sql
+@@ -37,4 +37,3 @@ order by
+ 	s_suppkey;
+ 
+ drop view revenue:s;
+-:n -1
+diff --git a/dbgen/queries/16.sql b/dbgen/queries/16.sql
+index 0dabfb5..e82e427 100644
+--- a/dbgen/queries/16.sql
++++ b/dbgen/queries/16.sql
+@@ -34,4 +34,3 @@ order by
+ 	p_brand,
+ 	p_type,
+ 	p_size;
+-:n -1
+diff --git a/dbgen/queries/17.sql b/dbgen/queries/17.sql
+index 3968f54..87ca1bf 100644
+--- a/dbgen/queries/17.sql
++++ b/dbgen/queries/17.sql
+@@ -21,4 +21,3 @@ where
+ 		where
+ 			l_partkey = p_partkey
+ 	);
+-:n -1
+diff --git a/dbgen/queries/18.sql b/dbgen/queries/18.sql
+index cce174f..438c6ed 100644
+--- a/dbgen/queries/18.sql
++++ b/dbgen/queries/18.sql
+@@ -35,5 +35,5 @@ group by
+ 	o_totalprice
+ order by
+ 	o_totalprice desc,
+-	o_orderdate;
++	o_orderdate
+ :n 100
+diff --git a/dbgen/queries/19.sql b/dbgen/queries/19.sql
+index 8b7b915..b6a0e9e 100644
+--- a/dbgen/queries/19.sql
++++ b/dbgen/queries/19.sql
+@@ -39,4 +39,3 @@ where
+ 		and l_shipmode in ('AIR', 'AIR REG')
+ 		and l_shipinstruct = 'DELIVER IN PERSON'
+ 	);
+-:n -1
+diff --git a/dbgen/queries/2.sql b/dbgen/queries/2.sql
+index 2308318..0219d0b 100644
+--- a/dbgen/queries/2.sql
++++ b/dbgen/queries/2.sql
+@@ -46,5 +46,5 @@ order by
+ 	s_acctbal desc,
+ 	n_name,
+ 	s_name,
+-	p_partkey;
++	p_partkey
+ :n 100
+diff --git a/dbgen/queries/20.sql b/dbgen/queries/20.sql
+index 1d358bf..d344dd2 100644
+--- a/dbgen/queries/20.sql
++++ b/dbgen/queries/20.sql
+@@ -41,4 +41,3 @@ where
+ 	and n_name = ':3'
+ order by
+ 	s_name;
+-:n -1
+diff --git a/dbgen/queries/21.sql b/dbgen/queries/21.sql
+index 38187dc..3d470ce 100644
+--- a/dbgen/queries/21.sql
++++ b/dbgen/queries/21.sql
+@@ -42,5 +42,5 @@ group by
+ 	s_name
+ order by
+ 	numwait desc,
+-	s_name;
++	s_name
+ :n 100
+diff --git a/dbgen/queries/22.sql b/dbgen/queries/22.sql
+index 9a2aeb7..98189df 100644
+--- a/dbgen/queries/22.sql
++++ b/dbgen/queries/22.sql
+@@ -41,4 +41,3 @@ group by
+ 	cntrycode
+ order by
+ 	cntrycode;
+-:n -1
+diff --git a/dbgen/queries/3.sql b/dbgen/queries/3.sql
+index f054d31..aeecd2b 100644
+--- a/dbgen/queries/3.sql
++++ b/dbgen/queries/3.sql
+@@ -25,5 +25,5 @@ group by
+ 	o_shippriority
+ order by
+ 	revenue desc,
+-	o_orderdate;
++	o_orderdate
+ :n 10
+diff --git a/dbgen/queries/4.sql b/dbgen/queries/4.sql
+index f068f36..d39dcec 100644
+--- a/dbgen/queries/4.sql
++++ b/dbgen/queries/4.sql
+@@ -25,4 +25,3 @@ group by
+ 	o_orderpriority
+ order by
+ 	o_orderpriority;
+-:n -1
+diff --git a/dbgen/queries/5.sql b/dbgen/queries/5.sql
+index 998913d..f376a36 100644
+--- a/dbgen/queries/5.sql
++++ b/dbgen/queries/5.sql
+@@ -28,4 +28,3 @@ group by
+ 	n_name
+ order by
+ 	revenue desc;
+-:n -1
+diff --git a/dbgen/queries/6.sql b/dbgen/queries/6.sql
+index 59a6883..7826055 100644
+--- a/dbgen/queries/6.sql
++++ b/dbgen/queries/6.sql
+@@ -13,4 +13,3 @@ where
+ 	and l_shipdate < date ':1' + interval '1' year
+ 	and l_discount between :2 - 0.01 and :2 + 0.01
+ 	and l_quantity < :3;
+-:n -1
+diff --git a/dbgen/queries/7.sql b/dbgen/queries/7.sql
+index 26eafad..112eef2 100644
+--- a/dbgen/queries/7.sql
++++ b/dbgen/queries/7.sql
+@@ -43,4 +43,3 @@ order by
+ 	supp_nation,
+ 	cust_nation,
+ 	l_year;
+-:n -1
+diff --git a/dbgen/queries/8.sql b/dbgen/queries/8.sql
+index 977d24e..b88c054 100644
+--- a/dbgen/queries/8.sql
++++ b/dbgen/queries/8.sql
+@@ -41,4 +41,3 @@ group by
+ 	o_year
+ order by
+ 	o_year;
+-:n -1
+diff --git a/dbgen/queries/9.sql b/dbgen/queries/9.sql
+index b262db4..24cfe11 100644
+--- a/dbgen/queries/9.sql
++++ b/dbgen/queries/9.sql
+@@ -36,4 +36,3 @@ group by
+ order by
+ 	nation,
+ 	o_year desc;
+-:n -1
+diff --git a/dbgen/tpcd.h b/dbgen/tpcd.h
+index 99bdae9..5e1cb4a 100644
+--- a/dbgen/tpcd.h
++++ b/dbgen/tpcd.h
+@@ -87,11 +87,11 @@
+ 
+ #ifdef 	SQLSERVER
+ #define GEN_QUERY_PLAN  "set showplan on\nset noexec on\ngo\n"
+-#define START_TRAN      "begin transaction\ngo\n"
+-#define END_TRAN        "commit transaction\ngo\n"
++#define START_TRAN      "BEGIN WORK;"
++#define END_TRAN        "COMMIT WORK;"
+ #define SET_OUTPUT      ""
+-#define SET_ROWCOUNT    "set rowcount %d\ngo\n\n"
+-#define SET_DBASE       "use %s\ngo\n"
++#define SET_ROWCOUNT    "limit %d;\n\n"
++#define SET_DBASE       "use %s;\n"
+ #endif
+ 
+ #ifdef 	SYBASE
+-- 
+2.13.0
+
