@@ -17,6 +17,7 @@ fi
 
 pushd $TPCHKIT
 patch -p1 < ../0001-Modify-for-MariaDB.patch
+cp ./dbgen/dists.dss ./dbgen/queries/
 popd
 
 popd
