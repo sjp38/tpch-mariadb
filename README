@@ -1,0 +1,5 @@
+Toolbox for TPC-H on MariaDB
+============================
+
+This repository is a toolbox for TPC-H benchmark[1] execution on MariaDB.  The
+tools help modifying, building, and running TPC-H kit source code for MariaDB.
