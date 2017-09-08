@@ -3,3 +3,24 @@ Toolbox for TPC-H on MariaDB
 
 This repository is a toolbox for TPC-H benchmark[1] execution on MariaDB.  The
 tools help modifying, building, and running TPC-H kit source code for MariaDB.
+
+
+Pre-requisites
+==============
+
+You should get TPC-H kit source code before using the tools.  You can
+download it from TPC website[2] as a tar ball after agree to their license.
+
+
+Versions
+========
+
+This toolbox is tested for TPC-H tools v2.17.2 and MariaDB 10.2.8, the latest
+version as of this writing.
+
+
+References
+==========
+
+[1] http://www.tpc.org/tpch/  
+[2] http://www.tpc.org/tpc_documents_current_versions/download_programs/tools-download-request.asp?bm_type=TPC-H&bm_vers=2.17.2&mode=CURRENT-ONLY
