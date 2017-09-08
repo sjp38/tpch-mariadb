@@ -55,7 +55,7 @@ Generate Data
 -------------
 
 ```
-$ ./dbgen.sh
+$ ./dbgen.sh <scale factor>
 ```
 
 
