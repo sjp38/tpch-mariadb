@@ -9,5 +9,6 @@ fi
 SF=$1
 
 pushd tpch-kit/dbgen
+rm -fr *.tbl
 ./dbgen -s $SF
 popd
