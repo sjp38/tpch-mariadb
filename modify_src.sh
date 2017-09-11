@@ -16,7 +16,7 @@ then
 fi
 
 pushd $TPCHKIT
-patch -p1 < ../0001-Modify-for-MariaDB.patch
+patch -p1 < ../modification.patch
 cp ./dbgen/dists.dss ./dbgen/queries/
 popd
 
