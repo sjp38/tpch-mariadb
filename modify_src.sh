@@ -4,10 +4,7 @@ BINDIR=`dirname $0`
 
 pushd $BINDIR
 
-if [ -z "$TPCHKIT" ]
-then
-	TPCHKIT=./tpch-kit
-fi
+TPCHKIT=./tpch-kit
 
 if [ ! -d $TPCHKIT ]
 then
