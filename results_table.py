@@ -18,6 +18,5 @@ for path in sys.argv[1:]:
             line = line.replace(':', '')
             text += line
     text += "\n\n"
-print text
 
 print ltldat.from_human_readable_txt(text).human_readable_txt()
