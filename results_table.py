@@ -15,6 +15,7 @@ for path in sys.argv[1:]:
     text += path + "\n"
     with open(path, 'r') as f:
         for line in f:
+            line = line.replace(':', '')
             text += line
     text += "\n\n"
 print text
