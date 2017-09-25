@@ -27,8 +27,8 @@ do
 	./runquery.sh $q > /dev/null
 	END=`date +%s%N`
 	DURATION=$(( $END - $START))
-	echo "$q: \t$DURATION nsecs"
+	printf "%d: \t%16d nsecs\n" $q $DURATION
 	TOTAL_NSECONDS=$(($TOTAL_NSECONDS + $DURATION))
 done
 
-echo "Total: $TOTAL_NSECONDS secs"
+printf "Total: \t%16d nsecs\n" $TOTAL_NSECONDS
