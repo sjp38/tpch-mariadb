@@ -20,13 +20,15 @@ fi
 
 MYSQL="$MYSQL tpch"
 
-TOTAL_SECONDS=0
+TOTAL_NSECONDS=0
 for q in {1..22}
 do
-	SECONDS=0
+	START=`date +%s%N`
 	./runquery.sh $q > /dev/null
-	echo "$q: $SECONDS secs"
-	TOTAL_SECONDS=$(($TOTAL_SECONDS + $SECONDS))
+	END=`date +%s%N`
+	DURATION=$(( $END - $START))
+	echo "$q: \t$DURATION nsecs"
+	TOTAL_NSECONDS=$(($TOTAL_NSECONDS + $DURATION))
 done
 
-echo "Total: $TOTAL_SECONDS secs"
+echo "Total: $TOTAL_NSECONDS secs"
