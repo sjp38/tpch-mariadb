@@ -12,6 +12,17 @@ then
 	PASSWORD=$2
 fi
 
+function msecs() {
+	echo $((`date +%s%N` / 1000000))
+}
+
+function msec_to_sec() {
+	MSECS=$1
+	SECS=$(($MSECS / 1000))
+	MSECS=$(($MSECS - $SECS * 1000))
+	printf %d.%03d $SECS $MSECS
+}
+
 MYSQL="/usr/local/mysql/bin/mysql -u $USER"
 if [ ! -z $PASSWORD ]
 then
@@ -20,15 +31,15 @@ fi
 
 MYSQL="$MYSQL tpch"
 
-TOTAL_NSECONDS=0
+TOTAL_MSECONDS=0
 for q in {1..22}
 do
-	START=`date +%s%N`
+	START=`msecs`
 	./runquery.sh $q > /dev/null
-	END=`date +%s%N`
+	END=`msecs`
 	DURATION=$(( $END - $START))
-	printf "%d: \t%16d nsecs\n" $q $DURATION
-	TOTAL_NSECONDS=$(($TOTAL_NSECONDS + $DURATION))
+	printf "%d: \t%16s secs\n" $q `msec_to_sec $DURATION`
+	TOTAL_MSECONDS=$(($TOTAL_MSECONDS + $DURATION))
 done
 
-printf "Total: \t%16d nsecs\n" $TOTAL_NSECONDS
+printf "Total: \t%16s secs\n" `msec_to_sec $TOTAL_MSECONDS`
