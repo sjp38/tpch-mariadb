@@ -74,7 +74,7 @@ Execute Power Test
 ------------------
 
 ```
-$ ./mkqueries.sh
+$ ./mkqueries.sh <scale factor>
 $ ./powertest.sh
 ```
 
@@ -83,7 +83,7 @@ Execute Query 2 Only
 --------------------
 
 ```
-$ ./mkqueries.sh
+$ ./mkqueries.sh <scale factor>
 $ ./runquery.sh 2
 ```
 

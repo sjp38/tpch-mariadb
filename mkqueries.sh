@@ -1,15 +1,16 @@
 #!/bin/bash
 
+if [ $# -ne 1 ]
+then
+	echo "Usage: $0 <scale factor>"
+	exit 1
+fi
+
+SF=$1
+
 BINDIR=`dirname $0`
 
 pushd $BINDIR/tpch-kit/dbgen/queries/
-
-SF=1
-
-if [ $# -eq 1 ]
-then
-	SF=$1
-fi
 
 for i in {1..22}
 do
