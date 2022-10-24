@@ -5,6 +5,7 @@
 BINDIR=`dirname $0`
 
 USER=root
+PASSWORD=password
 
 if [ $# -eq 2 ]
 then
@@ -23,10 +24,12 @@ function msec_to_sec() {
 	printf %d.%03d $SECS $MSECS
 }
 
-MYSQL="/usr/local/mysql/bin/mysql -u $USER"
+MYSQL_PATH=$(command -v mysql)
+
+MYSQL="$MYSQL_PATH -u $USER"
 if [ ! -z $PASSWORD ]
 then
-	MYSQL="$MYSQL -p $PASSWORD"
+	MYSQL="$MYSQL --password=$PASSWORD"
 fi
 
 MYSQL="$MYSQL tpch"

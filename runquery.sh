@@ -5,6 +5,7 @@ BINDIR=`dirname $0`
 pushd $BINDIR/tpch-kit/dbgen
 
 USER=root
+PASSWORD=password
 
 if [ $# -lt 1 ]
 then
@@ -20,10 +21,12 @@ then
 	PASSWORD=$3
 fi
 
-MYSQL="/usr/local/mysql/bin/mysql -u $USER"
+MYSQL_PATH=$(command -v mysql)
+
+MYSQL="$MYSQL_PATH -u $USER"
 if [ ! -z $PASSWORD ]
 then
-	MYSQL="$MYSQL -p $PASSWORD"
+	MYSQL="$MYSQL --password=$PASSWORD"
 fi
 
 $MYSQL tpch < ./queries/query-`printf %02d $NUM_Q`.sql

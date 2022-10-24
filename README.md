@@ -1,21 +1,28 @@
-Toolbox for TPC-H on MariaDB
-============================
+Toolbox for TPC-H on MySQL
+==============
 
-This repository is a toolbox for TPC-H benchmark[1] execution on MariaDB.  The
-tools help modifying, building, and running TPC-H kit source code for MariaDB.
+Forked from https://github.com/sjp38/tpch-mariadb
+
+Modification:
+1. use `"SET GLOBAL local_infile=1;"` to load local data in file
+2. set "password" as default password (insecure)
+
+
+This repository is a toolbox for TPC-H benchmark[1] execution on MySQL.  The
+tools help modifying, building, and running TPC-H kit source code for MySQL.
 
 
 Pre-requisites
 ==============
 
-You should get TPC-H kit source code before using the tools.  You can
-download it from TPC website[2] as a tar ball after agree to their license.
+1. You should get TPC-H kit source code before using the tools.  
+2. You can download it from TPC website[2] as a tar ball after agree to their license.
 
 
 Versions
 ========
 
-This toolbox is tested for TPC-H tools v2.17.2 and MariaDB 10.2.8, the latest
+This toolbox is tested for TPC-H V3.0.1 and MySQL 8.0.31, the latest
 version as of this writing.
 
 
@@ -30,8 +37,8 @@ Get TPC-H kit
 -------------
 
 ```
-$ unzip xxx-tpch-tool.zip
-$ mv 2.17.2/ tpch-kit/
+$ unzip xxx-tpc-h-tool.zip
+$ mv TPC-H\ V3.0.1/ tpch-kit/
 ```
 
 
@@ -66,7 +73,7 @@ Before next command, you should start mysqld daemon.  Next command assumes that
 your mysqld has user `root` without password.  In other words, it should be
 able to use `$ mysql -u root` to connect to MariaDB prompt.
 ```
-$ ./loadtest.sh
+$ ./loadtest.sh [user] [password]
 ```
 
 
@@ -75,7 +82,7 @@ Execute Power Test
 
 ```
 $ ./mkqueries.sh <scale factor>
-$ ./powertest.sh
+$ ./powertest.sh [user] [password]
 ```
 
 
@@ -84,18 +91,18 @@ Execute Query 2 Only
 
 ```
 $ ./mkqueries.sh <scale factor>
-$ ./runquery.sh 2
+$ ./runquery.sh 2 [user] [password]
 ```
 
 
 Author
 ======
 
-SeongJae Park <sj38.park@gmail.com>
+Pei Mu <ds1231h@gmail.com>
 
 
 References
 ==========
 
 [1] http://www.tpc.org/tpch/  
-[2] http://www.tpc.org/tpc_documents_current_versions/download_programs/tools-download-request.asp?bm_type=TPC-H&bm_vers=2.17.2&mode=CURRENT-ONLY
+[2] https://www.tpc.org/tpc_documents_current_versions/current_specifications5.asp

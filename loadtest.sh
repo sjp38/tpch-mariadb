@@ -7,6 +7,7 @@ BINDIR=`dirname $0`
 pushd $BINDIR/tpch-kit/dbgen
 
 USER=root
+PASSWORD=password
 
 if [ $# -eq 2 ]
 then
@@ -14,28 +15,36 @@ then
 	PASSWORD=$2
 fi
 
-MYSQL="/usr/local/mysql/bin/mysql -u $USER"
+MYSQL_PATH=$(command -v mysql)
+
+MYSQL="$MYSQL_PATH -u $USER"
 if [ ! -z $PASSWORD ]
 then
-	MYSQL="$MYSQL -p $PASSWORD"
+	MYSQL="$MYSQL --password=$PASSWORD"
 fi
+
+# Delete previous database
+$MYSQL -e "DROP DATABASE tpch;"
 
 # Create database
 $MYSQL -e "create database tpch;"
 
-MYSQL="$MYSQL tpch"
-
 TOTAL_SECS=0
 
 SECONDS=0
-$MYSQL < ./dss.ddl
+$MYSQL tpch < ./dss.ddl
 echo "Table-Creation: $SECONDS secs"
 TOTAL_SECS=$(($TOTAL_SECS + $SECONDS))
+
+$MYSQL -e "SET GLOBAL local_infile=1;"
+
+MYSQL="$MYSQL --local-infile=1 tpch"
 
 SECONDS=0
 for table in customer lineitem nation orders partsupp part region supplier
 do
-	$MYSQL -e "LOAD DATA LOCAL INFILE '$BINDIR/$table.tbl' INTO TABLE $table FIELDS TERMINATED BY '|';"
+	echo load $table
+	$MYSQL -e "LOAD DATA LOCAL INFILE '$table.tbl' INTO TABLE $table FIELDS TERMINATED BY '|';"
 done
 echo "Load-Tables: $SECONDS secs"
 TOTAL_SECS=$(($TOTAL_SECS + $SECONDS))
