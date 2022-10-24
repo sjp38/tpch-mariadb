@@ -1,11 +1,12 @@
 Toolbox for TPC-H on MySQL
+==============
 
 Forked from https://github.com/sjp38/tpch-mariadb
 
 Modification:
-1. use "SET GLOBAL local_infile=1;" to load local data in file
+1. use `"SET GLOBAL local_infile=1;"` to load local data in file
 2. set "password" as default password (insecure)
-============================
+
 
 This repository is a toolbox for TPC-H benchmark[1] execution on MySQL.  The
 tools help modifying, building, and running TPC-H kit source code for MySQL.
@@ -14,8 +15,8 @@ tools help modifying, building, and running TPC-H kit source code for MySQL.
 Pre-requisites
 ==============
 
-You should get TPC-H kit source code before using the tools.  You can
-download it from TPC website[2] as a tar ball after agree to their license.
+1. You should get TPC-H kit source code before using the tools.  
+2. You can download it from TPC website[2] as a tar ball after agree to their license.
 
 
 Versions
