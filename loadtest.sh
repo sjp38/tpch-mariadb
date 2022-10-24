@@ -44,7 +44,7 @@ SECONDS=0
 for table in customer lineitem nation orders partsupp part region supplier
 do
 	echo load $table
-	$MYSQL -e "LOAD DATA LOCAL INFILE '$BINDIR/$table.tbl' INTO TABLE $table FIELDS TERMINATED BY '|';"
+	$MYSQL -e "LOAD DATA LOCAL INFILE '$table.tbl' INTO TABLE $table FIELDS TERMINATED BY '|';"
 done
 echo "Load-Tables: $SECONDS secs"
 TOTAL_SECS=$(($TOTAL_SECS + $SECONDS))
